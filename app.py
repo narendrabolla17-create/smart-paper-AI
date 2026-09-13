@@ -1,5 +1,15 @@
 import os
+import sys
+
+# Force system environment to UTF-8 to completely eliminate ASCII encoding errors on cloud
 os.environ["PYTHONIOENCODING"] = "utf-8"
+os.environ["LANG"] = "C.UTF-8"
+os.environ["LC_ALL"] = "C.UTF-8"
+
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8')
+if hasattr(sys.stderr, 'reconfigure'):
+    sys.stderr.reconfigure(encoding='utf-8')
 
 import streamlit as st
 from google import genai
