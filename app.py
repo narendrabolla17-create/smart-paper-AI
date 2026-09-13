@@ -1,6 +1,3 @@
-import os
-os.environ["PYTHONUTF8"] = "1"
-
 import streamlit as st
 from google import genai
 
@@ -9,8 +6,8 @@ st.set_page_config(page_title="Smart Paper AI", page_icon="🎓", layout="center
 st.title("🎓 Smart Paper AI")
 st.subheader("GEC Students Co-AI Exam Assistant")
 
-# Sidebar inputs for settings
-st.sidebar.header("⚙️ యాప్ సెట్టింగ్స్")
+# Sidebar settings
+st.sidebar.header("App Settings")
 
 # Check Streamlit Secrets first, otherwise fallback to sidebar text input
 api_key = ""
@@ -24,55 +21,55 @@ if not api_key:
     api_key = st.sidebar.text_input("Google AI Studio API Key:", type="password")
 
 subject = st.sidebar.selectbox(
-    "సబ్జెక్ట్ ఎంచుకో:", 
+    "Select Subject:", 
     ["C Programming", "Python Programming", "Internet of Things (IoT)", "Data Structures"]
 )
 
 difficulty = st.sidebar.selectbox(
-    "డిఫికల్టీ లెవెల్:", 
+    "Difficulty Level:", 
     ["Easy", "Medium", "Hard"]
 )
 
-show_answers = st.sidebar.checkbox("✅ యాన్సర్ కీ / సొల్యూషన్స్ కావాలి", value=True)
+show_answers = st.sidebar.checkbox("Include Answer Key / Solutions", value=True)
 
 # Main content area
-topic = st.text_input("Topic పేరు టైప్ చేయి (eg: Arrays, Sensors, Loops):")
+topic = st.text_input("Enter Topic Name (eg: Arrays, Sensors, Loops):")
 
 if api_key:
     try:
         client = genai.Client(api_key=api_key)
 
-        if st.button("📄 Paper జెనరేట్ చేయి"):
+        if st.button("Generate Paper"):
             if not topic.strip():
-                st.warning("దయచేసి టాపిక్ పేరు రాయండి!")
+                st.warning("Please enter a topic name!")
             else:
-                with st.spinner("AI ఎగ్జామ్ పేపర్ తయారు చేస్తోంది... వేచి ఉండండి 🚀"):
+                with st.spinner("AI is generating the exam paper... Please wait 🚀"):
                     answer_instruction = "Include detailed answers and explanations for the questions." if show_answers else "Provide only questions without answers."
                     
                     prompt = (
                         f"Act as an expert professor. Generate a comprehensive exam paper and study guide for "
                         f"the subject '{subject}' with '{difficulty}' difficulty level, specifically focused on the topic '{topic}'. "
                         f"Include a clear concept summary and 5 important short questions. {answer_instruction} "
-                        f"Provide simple Telugu explanations alongside English technical terms."
+                        f"Provide clear explanations alongside technical terms."
                     )
                     
                     response = client.models.generate_content(
-                        model='gemini-3.6-flash',
+                        model='gemini-2.5-flash',
                         contents=prompt
                     )
                     paper_content = response.text
                     
-                    st.success("✨ నీ Smart Paper సిద్ధంగా ఉంది!")
+                    st.success("Your Smart Paper is ready!")
                     st.markdown(paper_content)
                     
                     # Download Button
                     st.download_button(
-                        label="📥 Download Paper as File",
+                        label="Download Paper as File",
                         data=paper_content,
                         file_name=f"{subject}_{topic}_Exam_Paper.txt",
                         mime="text/plain"
                     )
     except Exception as e:
-        st.error(f"ఎర్రర్ వచ్చింది: {e}")
+        st.error(f"Error Details: {e}")
 else:
-    st.info("దయచేసి మీ Google AI Studio API Key ని సైడ్‌బార్‌లో ఎంటర్ చేయండి లేదా Secrets సెట్ చేయండి.")
+    st.info("Please enter your Google AI Studio API Key in the sidebar or configure it in Streamlit Secrets.")
