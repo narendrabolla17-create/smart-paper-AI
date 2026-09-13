@@ -6,37 +6,41 @@ st.set_page_config(page_title="Smart Paper AI", page_icon="🎓", layout="center
 st.title("🎓 Smart Paper AI")
 st.subheader("GEC Students Co-AI Exam Assistant")
 
-# API Key input
-api_key = st.text_input("Google AI Studio API Key ఇక్కడ పెట్టు:", type="password")
+# Sidebar inputs for a clean professional look
+st.sidebar.header("⚙️ యాప్ సెట్టింగ్స్")
+api_key = st.sidebar.text_input("Google AI Studio API Key:", type="password")
+
+subject = st.sidebar.selectbox(
+    "సబ్జెక్ట్ ఎంచుకో:", 
+    ["C Programming", "Python Programming", "Internet of Things (IoT)", "Data Structures"]
+)
+
+difficulty = st.sidebar.selectbox(
+    "డిఫికల్టీ లెవెల్:", 
+    ["Easy", "Medium", "Hard"]
+)
+
+show_answers = st.sidebar.checkbox("✅ యాన్సర్ కీ / సొల్యూషన్స్ కావాలి", value=True)
+
+# Main content area
+topic = st.text_input("Topic పేరు టైప్ చేయి (eg: Arrays, Sensors, Loops):")
 
 if api_key:
     try:
         client = genai.Client(api_key=api_key)
-        
-        # Layout columns for Subject and Difficulty
-        col1, col2 = st.columns(2)
-        with col1:
-            subject = st.selectbox(
-                "సబ్జెక్ట్ ఎంచుకో:", 
-                ["C Programming", "Python Programming", "Internet of Things (IoT)", "Data Structures"]
-            )
-        with col2:
-            difficulty = st.selectbox(
-                "డిఫికల్టీ లెవెల్:", 
-                ["Easy", "Medium", "Hard"]
-            )
-            
-        topic = st.text_input("Topic పేరు టైప్ చేయి (eg: Arrays, Sensors, Loops):")
 
         if st.button("📄 Paper జెనరేట్ చేయి"):
             if not topic.strip():
                 st.warning("దయచేసి టాపిక్ పేరు రాయండి!")
             else:
                 with st.spinner("AI ఎగ్జామ్ పేపర్ తయారు చేస్తోంది... వేచి ఉండండి 🚀"):
+                    answer_instruction = "Include detailed answers and explanations for the questions." if show_answers else "Provide only questions without answers."
+                    
                     prompt = (
                         f"Act as an expert professor. Generate a comprehensive exam paper and study guide for "
                         f"the subject '{subject}' with '{difficulty}' difficulty level, specifically focused on the topic '{topic}'. "
-                        f"Include a clear concept summary and 5 important short questions with answers, providing simple Telugu explanations alongside English technical terms."
+                        f"Include a clear concept summary and 5 important short questions. {answer_instruction} "
+                        f"Provide simple Telugu explanations alongside English technical terms."
                     )
                     
                     response = client.models.generate_content(
@@ -58,4 +62,4 @@ if api_key:
     except Exception as e:
         st.error(f"ఎర్రర్ వచ్చింది: {e}")
 else:
-    st.info("దయచేసి పైన మీ Google AI Studio API Key ఎంటర్ చేయండి.")
+    st.info("దయచేసి లెఫ్ట్ సైడ్ ఉన్న సైడ్‌బార్‌లో మీ Google AI Studio API Key ఎంటర్ చేయండి.")
