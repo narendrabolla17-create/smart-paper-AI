@@ -40,7 +40,7 @@ if api_key:
                     )
                     
                     response = client.models.generate_content(
-                        model='gemini-2.5-flash',
+                        model='gemini-3.6-flash',
                         contents=prompt
                     )
                     paper_content = response.text
@@ -58,4 +58,4 @@ if api_key:
     except Exception as e:
         st.error(f"ఎర్రర్ వచ్చింది: {e}")
 else:
-    st.info("దయచేసి పైన మీ Google AI Studio API Key ఎంటర్ చేయండి.")
+    st.info("దయచేసి పైన మీ Google AI Studio API Key ఎంటర్ చేయండి.")v
