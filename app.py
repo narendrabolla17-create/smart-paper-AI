@@ -58,4 +58,4 @@ if api_key:
     except Exception as e:
         st.error(f"ఎర్రర్ వచ్చింది: {e}")
 else:
-    st.info("దయచేసి పైన మీ Google AI Studio API Key ఎంటర్ చేయండి.")v
+    st.info("దయచేసి పైన మీ Google AI Studio API Key ఎంటర్ చేయండి.")
