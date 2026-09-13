@@ -1,3 +1,6 @@
+import os
+os.environ["PYTHONUTF8"] = "1"
+
 import streamlit as st
 from google import genai
 
