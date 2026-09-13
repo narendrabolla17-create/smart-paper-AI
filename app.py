@@ -1,3 +1,10 @@
+import sys
+import io
+
+# Force UTF-8 encoding to prevent UnicodeEncodeError on cloud servers
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
 import streamlit as st
 from google import genai
 
@@ -33,7 +40,7 @@ topic = st.text_input("Topic పేరు టైప్ చేయి (eg: Arrays,
 
 if client:
     if st.button("📄 Paper జెనరేట్ చేయి"):
-        if not topic.strict() if hasattr(topic, 'strict') else not topic.strip():
+        if not topic.strip():
             st.warning("దయచేసి టాపిక్ పేరు రాయండి!")
         else:
             with st.spinner("AI ఎగ్జామ్ పేపర్ తయారు చేస్తోంది... వేచి ఉండండి 🚀"):
