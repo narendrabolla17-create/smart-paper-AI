@@ -1,5 +1,5 @@
 import streamlit as st
-from google import genai
+import google.generativeai as genai
 
 st.set_page_config(page_title="Smart Paper AI", page_icon="🎓", layout="centered")
 
@@ -37,7 +37,8 @@ topic = st.text_input("Enter Topic Name (eg: Arrays, Sensors, Loops):")
 
 if api_key:
     try:
-        client = genai.Client(api_key=api_key)
+        genai.configure(api_key=api_key)
+        model = genai.GenerativeModel('gemini-1.5-flash')
 
         if st.button("Generate Paper"):
             if not topic.strip():
@@ -53,10 +54,7 @@ if api_key:
                         f"Provide clear explanations alongside technical terms."
                     )
                     
-                    response = client.models.generate_content(
-                        model='gemini-2.5-flash',
-                        contents=prompt
-                    )
+                    response = model.generate_content(prompt)
                     paper_content = response.text
                     
                     st.success("Your Smart Paper is ready!")
