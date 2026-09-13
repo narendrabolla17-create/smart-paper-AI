@@ -6,10 +6,8 @@ st.set_page_config(page_title="Smart Paper AI", page_icon="🎓", layout="center
 st.title("🎓 Smart Paper AI")
 st.subheader("GEC Students Co-AI Exam Assistant")
 
-# Sidebar settings
 st.sidebar.header("App Settings")
 
-# Check Streamlit Secrets first, otherwise fallback to sidebar text input
 api_key = ""
 try:
     if "GEMINI_API_KEY" in st.secrets:
@@ -32,7 +30,6 @@ difficulty = st.sidebar.selectbox(
 
 show_answers = st.sidebar.checkbox("Include Answer Key / Solutions", value=True)
 
-# Main content area
 topic = st.text_input("Enter Topic Name (eg: Arrays, Sensors, Loops):")
 
 if api_key:
@@ -46,21 +43,20 @@ if api_key:
             else:
                 with st.spinner("AI is generating the exam paper... Please wait 🚀"):
                     answer_instruction = "Include detailed answers and explanations for the questions." if show_answers else "Provide only questions without answers."
-                    
+
                     prompt = (
                         f"Act as an expert professor. Generate a comprehensive exam paper and study guide for "
                         f"the subject '{subject}' with '{difficulty}' difficulty level, specifically focused on the topic '{topic}'. "
                         f"Include a clear concept summary and 5 important short questions. {answer_instruction} "
                         f"Provide clear explanations alongside technical terms."
                     )
-                    
+
                     response = model.generate_content(prompt)
                     paper_content = response.text
-                    
+
                     st.success("Your Smart Paper is ready!")
                     st.markdown(paper_content)
-                    
-                    # Download Button
+
                     st.download_button(
                         label="Download Paper as File",
                         data=paper_content,
