@@ -42,28 +42,31 @@ if api_key:
                 st.warning("Please enter a topic name!")
             else:
                 with st.spinner("AI is generating the exam paper... Please wait 🚀"):
-                    answer_instruction = "Include detailed answers and explanations for the questions." if show_answers else "Provide only questions without answers."
-
-                    prompt = (
-                        f"Act as an expert professor. Generate a comprehensive exam paper and study guide for "
-                        f"the subject '{subject}' with '{difficulty}' difficulty level, specifically focused on the topic '{topic}'. "
-                        f"Include a clear concept summary and 5 important short questions. {answer_instruction} "
-                        f"Provide clear explanations alongside technical terms."
-                    )
-
-                    response = model.generate_content(prompt)
-                    paper_content = response.text
-
-                    st.success("Your Smart Paper is ready!")
-                    st.markdown(paper_content)
-
-                    st.download_button(
-                        label="Download Paper as File",
-                        data=paper_content,
-                        file_name=f"{subject}_{topic}_Exam_Paper.txt",
-                        mime="text/plain"
-                    )
+                    try:
+                        answer_instruction = "Include detailed answers and explanations for the questions." if show_answers else "Provide only questions without answers."
+                        
+                        prompt = (
+                            f"Act as an expert professor. Generate a comprehensive exam paper and study guide for "
+                            f"the subject '{subject}' with '{difficulty}' difficulty level, specifically focused on the topic '{topic}'. "
+                            f"Include a clear concept summary and 5 important short questions. {answer_instruction} "
+                            f"Provide clear explanations alongside technical terms."
+                        )
+                        
+                        response = model.generate_content(prompt, request_options={'timeout': 25})
+                        paper_content = response.text
+                        
+                        st.success("Your Smart Paper is ready!")
+                        st.markdown(paper_content)
+                        
+                        st.download_button(
+                            label="Download Paper as File",
+                            data=paper_content,
+                            file_name=f"{subject}_{topic}_Exam_Paper.txt",
+                            mime="text/plain"
+                        )
+                    except Exception as api_err:
+                        st.error(f"Network Timeout / API Error: {api_err}")
     except Exception as e:
-        st.error(f"Error Details: {e}")
+        st.error(f"Configuration Error: {e}")
 else:
     st.info("Please enter your Google AI Studio API Key in the sidebar or configure it in Streamlit Secrets.")
